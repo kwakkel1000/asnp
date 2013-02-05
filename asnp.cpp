@@ -41,7 +41,7 @@
 HD44780 lcd;
 
 // functions
-
+/*
 void checkButton();
 void action();
 
@@ -92,7 +92,7 @@ void action()
 {
 
 }
-
+*/
 
 int main(void)
 {
@@ -119,7 +119,7 @@ int main(void)
     l_Usart->putString((uint8_t*)"usart init done\r\n");
     l_UsartReadBuf = l_Usart->read();
     */
-
+/*
     // SPI
     spi* l_Spi;
     uint8_t l_SpiReadBuf;
@@ -181,4 +181,5 @@ int main(void)
         //l_Usart->putString((uint8_t*)"slaveSelect i2c slave 1 read failed. status: " + l_I2c->getStatus() + (uint8_t*)"\r\n");
     }
     l_I2c->stop();
+*/
 }
