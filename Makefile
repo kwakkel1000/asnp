@@ -30,7 +30,7 @@ install: all
 	$(AVRDUDE) $(AVRDUDE_FLAGS) $(AVRDUDE_WRITE_FLASH)
 
 fuseext:
-	$(AVRDUDE) $(AVRDUDE_FLAGS) -U lfuse:w:0xE7:m -U hfuse:w:0xD9:m -U efuse:w:0x07:m
+	$(AVRDUDE) $(AVRDUDE_FLAGS) -U lfuse:w:0xF7:m -U hfuse:w:0xD9:m -U efuse:w:0x07:m
 
 fuseint:
 	$(AVRDUDE) $(AVRDUDE_FLAGS) -U lfuse:w:0xE2:m -U hfuse:w:0xD9:m -U efuse:w:0x07:m

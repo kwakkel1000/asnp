@@ -182,4 +182,8 @@ int main(void)
     }
     l_I2c->stop();
 */
+    for(;;)
+    {
+        ;
+    }
 }
