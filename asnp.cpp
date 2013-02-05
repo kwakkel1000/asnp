@@ -93,17 +93,19 @@ void action()
 
 }
 */
+#define LED_MASK   ((1 << 7) | (1 << 6) | (1 << 5))
 
 int main(void)
 {
-
+    DDRD = LED_MASK;
+/*
     lcd.lcd_init(); // init the LCD screen
     lcd.lcd_clrscr(); // initial screen cleanup
     lcd.lcd_home();
     char szDisp[255] = {0};
     sprintf(szDisp,"booting\n");
     lcd.lcd_string(szDisp);
-
+*/
     /*
     // USART
     usart* l_Usart;
@@ -184,6 +186,7 @@ int main(void)
 */
     for(;;)
     {
+        PORTD ^= (1 << 6);
         ;
     }
 }
