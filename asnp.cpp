@@ -23,6 +23,9 @@
 //
 
 #include "aux_globals.h"
+#include <stdint.h>
+#include <stdio.h>
+#include <avr/interrupt.h>
 
 #include "communication/include/usart.h"
 #include "communication/include/spi.h"
@@ -37,15 +40,21 @@
 
 HD44780 lcd;
 
+// functions
+
+void checkButton();
+void action();
+
+
 //2-dimensional array for asigning the buttons and there high and low values
-uint g_Button[6][3] = {{1, 837, 838}, // button 1
+uint16_t g_Button[6][3] = {{1, 837, 838}, // button 1
                      {2, 737, 738}, // button 2
                      {3, 610, 611}, // button 3
                      {4, 318, 319}, // button 4
                      {5, 178, 179}, // button 5
                      {6, 91, 92}}; // button 6
 
-uint g_ButtonValue = 0;
+uint16_t g_ButtonValue = 0;
 
 // CTC interrupt for Timer 1
 volatile int interval1;
@@ -58,7 +67,7 @@ ISR(TIMER1_COMPA_vect)
     if (counter1 == interval1)
     {
         counter1 = 0;
-        checkButtonr();
+        checkButton();
     }
     counter1++;
 }
@@ -66,18 +75,18 @@ ISR(TIMER1_COMPA_vect)
 void checkButton()
 {
     // loop for scanning the button array.
-    for(uint buttonIndex = 0; buttonIndex <= 21; buttonIndex++)
+    for(uint8_t buttonIndex = 0; buttonIndex <= 21; buttonIndex++)
     {
         // checks the ButtonVal against the high and low vales in the array
-        if(g_ButtonValue >= g_Button[i][j] && ButtonVal <= Button[i][j+1])
+        if(g_ButtonValue >= g_Button[buttonIndex][1] && g_ButtonValue <= g_Button[buttonIndex][2])
         {
-            Action(g_Button[buttonIndex][0]);
+            //action(g_Button[buttonIndex][0]);
         }
     }
 }
 
-uint g_Menu = 0;
-uint g_MenuItem = 0;
+uint8_t g_Menu = 0;
+uint8_t g_MenuItem = 0;
 
 void action()
 {
