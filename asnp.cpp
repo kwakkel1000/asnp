@@ -22,11 +22,12 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
 
-#include "aux_globals.h"
-#include <stdint.h>
-#include <stdio.h>
-#include <avr/interrupt.h>
 
+#include "aux_globals.h"
+//#include <stdint.h>
+//#include <stdio.h>
+//#include <avr/interrupt.h>
+/*
 #include "communication/include/usart.h"
 #include "communication/include/spi.h"
 #include "communication/include/i2c.h"
@@ -39,7 +40,7 @@
 #define SPI_SLAVE_1 PB5
 
 HD44780 lcd;
-
+*/
 // functions
 /*
 void checkButton();

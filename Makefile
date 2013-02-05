@@ -2,7 +2,8 @@
 # Makefile for ATmega328p
 # ======================================================================
 TARGET = asnp
-SRC = asnp.cpp aux_globals.cpp communication/src/spi.cpp communication/src/i2c.cpp communication/src/usart.cpp lcd/src/HD44780.cpp
+SRC = asnp.cpp aux_globals.cpp
+#SRC = asnp.cpp aux_globals.cpp communication/src/spi.cpp communication/src/i2c.cpp communication/src/usart.cpp lcd/src/HD44780.cpp
 # ======================================================================
 # You shouldn't have to edit below this line
 # ======================================================================
