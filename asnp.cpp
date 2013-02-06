@@ -210,12 +210,15 @@ int main(void)
     lcd.lcd_clrscr();
     double raw;
     double button;
+    sprintf(szDisp,"read adc\n");
+    lcd.lcd_string(szDisp);
     for(;;)
     {
         raw = readADC(3);
         button = (double)VREF/1024*raw;
         lcd.lcd_clrscr();
-        sprintf(szDisp,"input %4.1f/1024 %4.2fV\n", raw, button);
+        sprintf(szDisp,"%4.1f/1024 %4.2fV\n", raw, button);
+        lcd.lcd_string(szDisp);
         fcpu_delay_ms(500);
         ;
     }
