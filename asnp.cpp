@@ -123,7 +123,7 @@ void checkButton()
 
 uint8_t readEEPROM(uint16_t address)
 {
-    uint8_t data = 0xFF;
+    uint8_t data = 0x00;
     g_I2C->start();
     g_I2C->selectSlave(I2C_EEPROM_1, I2C_WRITE); // 0/1 reversed
     //if (g_I2C->selectSlave(I2C_EEPROM_1, I2C_WRITE) == SUCCESS)
@@ -367,6 +367,8 @@ int main(void)
     sprintf(szDisp,"W:%X\n", 0x88);
     lcd.lcd_string(szDisp);
     writeEEPROM(0x0001, 0x88);
+    writeEEPROM(0x0002, 0x66);
+    writeEEPROM(0x0003, 0x44);
     fcpu_delay_ms(5000);
     lcd.lcd_clrscr();
     sprintf(szDisp,"read eeprom\n");
@@ -375,7 +377,10 @@ int main(void)
     for(;;)
     {
         lcd.lcd_clrscr();
-        eepromData = readEEPROM(0x0001);
+        eepromData = readEEPROM(0x0002);
+        sprintf(szDisp,"R:%X\n", eepromData);
+        lcd.lcd_string(szDisp);
+        eepromData = readEEPROM(0x0003);
         sprintf(szDisp,"R:%X\n", eepromData);
         lcd.lcd_string(szDisp);
 /*        raw = readADC(3);
