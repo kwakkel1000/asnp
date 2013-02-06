@@ -136,7 +136,7 @@ uint8_t readEEPROM(uint16_t address)
         {
         }
     }
-    g_I2C->stop();
+//    g_I2C->stop();
     g_I2C->start();
     g_I2C->selectSlave(I2C_EEPROM_1, I2C_WRITE); // 0/1 reversed
     //if (g_I2C->selectSlave(I2C_EEPROM_1, I2C_READ) == SUCCESS)
