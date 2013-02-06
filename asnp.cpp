@@ -125,7 +125,7 @@ uint8_t readEEPROM(uint16_t address)
 {
     uint8_t data = 0x00;
     g_I2C->start();
-    g_I2C->selectSlave(I2C_EEPROM_1, I2C_WRITE); // 0/1 reversed
+    g_I2C->selectSlave(I2C_EEPROM_1, I2C_READ); // 0/1 reversed
     //if (g_I2C->selectSlave(I2C_EEPROM_1, I2C_WRITE) == SUCCESS)
     {
         //sprintf(szDisp,"read select success\n");
@@ -135,7 +135,12 @@ uint8_t readEEPROM(uint16_t address)
         if (g_I2C->getStatus() != 0x28)
         {
         }
-        g_I2C->start();
+    }
+    g_I2C->stop();
+    g_I2C->start();
+    g_I2C->selectSlave(I2C_EEPROM_1, I2C_WRITE); // 0/1 reversed
+    //if (g_I2C->selectSlave(I2C_EEPROM_1, I2C_READ) == SUCCESS)
+    {
         data = g_I2C->read(false); // read only 1 byte so ack = false
         if (g_I2C->getStatus() != 0x58) // 0x50 when ack = true
         //if (g_I2C->getStatus() != 0x50) // 0x50 when ack = true
