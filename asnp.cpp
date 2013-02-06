@@ -124,7 +124,8 @@ uint8_t readEEPROM(uint16_t address)
 {
     uint8_t data = 0xFF;
     g_I2C->start();
-    if (g_I2C->selectSlave(I2C_EEPROM_1, I2C_WRITE) == SUCCESS)
+    g_I2C->selectSlave(I2C_EEPROM_1, I2C_READ);
+    //if (g_I2C->selectSlave(I2C_EEPROM_1, I2C_WRITE) == SUCCESS)
     {
         sprintf(szDisp,"write select success\n");
         lcd.lcd_string(szDisp);
@@ -139,12 +140,12 @@ uint8_t readEEPROM(uint16_t address)
         {
         }
     }
-    else
+/*    else
     {
         sprintf(szDisp,"read select fail\n");
         lcd.lcd_string(szDisp);
         //l_Usart->putString((uint8_t*)"slaveSelect i2c slave 1 read failed. status: " + l_I2c->getStatus() + (uint8_t*)"\r\n");
-    }
+    }*/
     g_I2C->stop();
     return data;
 }
@@ -152,7 +153,8 @@ uint8_t readEEPROM(uint16_t address)
 void writeEEPROM(uint16_t address, uint8_t data)
 {
     g_I2C->start();
-    if (g_I2C->selectSlave(I2C_EEPROM_1, I2C_WRITE) == SUCCESS)
+    g_I2C->selectSlave(I2C_EEPROM_1, I2C_WRITE);
+    //if (g_I2C->selectSlave(I2C_EEPROM_1, I2C_WRITE) == SUCCESS)
     {
         sprintf(szDisp,"write select success\n");
         lcd.lcd_string(szDisp);
@@ -166,11 +168,11 @@ void writeEEPROM(uint16_t address, uint8_t data)
         {
         }
     }
-    else
+/*    else
     {
         sprintf(szDisp,"write select fail\n");
         lcd.lcd_string(szDisp);
-    }
+    }*/
     g_I2C->stop();
 }
 
@@ -362,11 +364,13 @@ int main(void)
     lcd.lcd_string(szDisp);
     writeEEPROM(0x0000, 0x88);
     fcpu_delay_ms(5000);
+    lcd.lcd_clrscr();
     sprintf(szDisp,"read eeprom\n");
     lcd.lcd_string(szDisp);
     uint8_t eepromData = 0x00;
     for(;;)
     {
+        lcd.lcd_clrscr();
         eepromData = readEEPROM(0x0000);
         sprintf(szDisp,"%c\n", eepromData);
         lcd.lcd_string(szDisp);
