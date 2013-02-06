@@ -124,7 +124,7 @@ uint8_t readEEPROM(uint16_t address)
 {
     uint8_t data = 0xFF;
     g_I2C->start();
-    g_I2C->selectSlave(I2C_EEPROM_1, I2C_READ);
+    g_I2C->selectSlave(I2C_EEPROM_1, I2C_WRITE); // 0/1 reversed
     //if (g_I2C->selectSlave(I2C_EEPROM_1, I2C_WRITE) == SUCCESS)
     {
         sprintf(szDisp,"read select success\n");
@@ -154,7 +154,7 @@ uint8_t readEEPROM(uint16_t address)
 void writeEEPROM(uint16_t address, uint8_t data)
 {
     g_I2C->start();
-    g_I2C->selectSlave(I2C_EEPROM_1, I2C_WRITE);
+    g_I2C->selectSlave(I2C_EEPROM_1, I2C_READ); // 0/1 reversed
     //if (g_I2C->selectSlave(I2C_EEPROM_1, I2C_WRITE) == SUCCESS)
     {
         sprintf(szDisp,"write select success\n");
