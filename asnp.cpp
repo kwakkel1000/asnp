@@ -381,6 +381,9 @@ int main(void)
         sprintf(szDisp,"R:%X\n", eepromData);
         lcd.lcd_string(szDisp);
         eepromData = readEEPROM(0x0003);
+        eepromData = readEEPROM(0x0004);
+        eepromData = readEEPROM(0x0005);
+        eepromData = readEEPROM(0x0006);
         sprintf(szDisp,"R:%X\n", eepromData);
         lcd.lcd_string(szDisp);
 /*        raw = readADC(3);
