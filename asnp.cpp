@@ -34,8 +34,8 @@
 
 #include "lcd/include/HD44780.h"
 
-//#define I2C_EEPROM_1 0b1010000
-#define I2C_EEPROM_1 0x50
+#define I2C_EEPROM_1 0b1010000
+//#define I2C_EEPROM_1 0x50
 #define SPI_ENC28J60 PB5
 
 #define VREF 5
