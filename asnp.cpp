@@ -34,7 +34,8 @@
 
 #include "lcd/include/HD44780.h"
 
-#define I2C_EEPROM_1 0b1010000
+//#define I2C_EEPROM_1 0b1010000
+#define I2C_EEPROM_1 0x50
 #define SPI_ENC28J60 PB5
 
 #define VREF 5
@@ -365,7 +366,7 @@ int main(void)
     sprintf(szDisp,"write eeprom\n");
     sprintf(szDisp,"W:%X\n", 0x88);
     lcd.lcd_string(szDisp);
-    writeEEPROM(0x0000, 0x88);
+    writeEEPROM(0x0001, 0x88);
     fcpu_delay_ms(5000);
     lcd.lcd_clrscr();
     sprintf(szDisp,"read eeprom\n");
@@ -374,7 +375,7 @@ int main(void)
     for(;;)
     {
         lcd.lcd_clrscr();
-        eepromData = readEEPROM(0x0000);
+        eepromData = readEEPROM(0x0001);
         sprintf(szDisp,"R:%X\n", eepromData);
         lcd.lcd_string(szDisp);
 /*        raw = readADC(3);
