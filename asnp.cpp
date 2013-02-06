@@ -49,14 +49,19 @@ void action();
 uint16_t readADC(uint8_t ADCchannel);
 
 //2-dimensional array for asigning the buttons and there high and low values
-uint16_t g_Button[6][3] = {{1, 837, 838}, // button 1
-                     {2, 737, 738}, // button 2
-                     {3, 610, 611}, // button 3
-                     {4, 318, 319}, // button 4
-                     {5, 178, 179}, // button 5
+uint16_t g_Button[6][3] = {{1, 950, 1000}, // button 1
+                     {2, 850, 900}, // button 2
+                     {3, 700, 750}, // button 3
+                     {4, 350, 400}, // button 4
+                     {5, 200, 250}, // button 5
                      {6, 91, 92}}; // button 6
 
 uint16_t g_ButtonValue = 0;
+int label = 0;  // for reporting the button label
+int counter = 0; // how many times we have seen new value
+int debounce_count = 50; // number of millis/samples to consider before declaring a debounced input
+int current_state = 0;  // the debounced input value
+
 
 // CTC interrupt for Timer 1
 volatile int interval1;
@@ -69,7 +74,26 @@ ISR(TIMER1_COMPA_vect)
     if (counter1 == interval1)
     {
         counter1 = 0;
-        checkButton();
+        g_ButtonValue = readADC(0);
+        if(g_ButtonValue == current_state && counter >0)
+        {
+            counter--;
+        }
+        if(g_ButtonValue != current_state)
+        {
+            counter++;
+        }
+        // If ButtonVal has shown the same value for long enough let's switch it
+        if (counter >= debounce_count)
+        {
+            counter = 0;
+            current_state = g_ButtonValue;
+            //Checks which button or button combo has been pressed
+            if (g_ButtonValue > 0)
+            {
+                checkButton();
+            }
+        }
     }
     counter1++;
 }
@@ -82,17 +106,48 @@ void checkButton()
         // checks the ButtonVal against the high and low vales in the array
         if(g_ButtonValue >= g_Button[buttonIndex][1] && g_ButtonValue <= g_Button[buttonIndex][2])
         {
-            //action(g_Button[buttonIndex][0]);
+            label = g_Button[buttonIndex][0];
+            action();
         }
     }
 }
 
+char szDisp[255] = {0};
 uint8_t g_Menu = 0;
 uint8_t g_MenuItem = 0;
 
 void action()
 {
-
+    if(label == 1)
+    {
+        sprintf(szDisp,"up button \n");
+        lcd.lcd_string(szDisp);
+    }
+  if(label == 2)
+  {
+        sprintf(szDisp,"down button \n");
+        lcd.lcd_string(szDisp);
+  }
+  if(label == 3)
+  {
+        sprintf(szDisp,"left button \n");
+        lcd.lcd_string(szDisp);
+  }
+  if(label == 4)
+  {
+        sprintf(szDisp,"right button \n");
+        lcd.lcd_string(szDisp);
+  }
+  if(label == 5)
+  {
+        sprintf(szDisp,"action button 1\n");
+        lcd.lcd_string(szDisp);
+  }
+  if(label == 6)
+  {
+        sprintf(szDisp,"action button 2\n");
+        lcd.lcd_string(szDisp);
+  }
 }
 
 uint16_t readADC(uint8_t ADCchannel)
@@ -112,7 +167,6 @@ int main(void)
     lcd.lcd_init(); // init the LCD screen
     lcd.lcd_clrscr(); // initial screen cleanup
     lcd.lcd_home();
-    char szDisp[255] = {0};
     sprintf(szDisp,"booting\n");
     lcd.lcd_string(szDisp);
     // lcd
@@ -123,6 +177,31 @@ int main(void)
     //set prescaller to 128 and enable ADC
     ADCSRA |= (1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0)|(1<<ADEN);
     // adc
+
+
+    // timer
+    // setup timer 1 for CTC
+    TCCR1B |= (1 << WGM12); // MAX counter = value OCR1A (Mode 4 / CTC)
+
+    //TCCR1B |= 0x01; // prescaler = 1; // TCCR1B |= (1 << CS10);
+    //TCCR1B |= 0x02; // prescaler = 8; // TCCR1B |= (1 << CS11);
+    TCCR1B |= 0x03; // prescaler = 64; // TCCR1B |= (1 << CS11) | (1 << CS10);
+    //TCCR1B |= 0x04; // prescaler = 256; // TCCR1B |= (1 << CS12);
+    //TCCR1B |= 0x05; // prescaler = 1024; // TCCR1B |= (1 << CS12) | (1 << CS10);
+
+    // setup period
+    // when OCR1A = 2400 and prescaler = 8, TIMER1_COMPA_vect interrupt is triggered 1000 times/sec
+    // because: 12000000 / 8 / 2400 = 1000;
+    OCR1A = 25000; // OCR1A is 16 bit, so max 65535
+
+    // trigger interrupt when Timer1 == OCR1A
+    TIMSK1 = 1 << OCIE1A;
+
+
+    // start timer and interrupts
+    sei();
+    // timer
+
 
     /*
     // USART
@@ -139,6 +218,7 @@ int main(void)
     l_Usart->putString((uint8_t*)"usart init done\r\n");
     l_UsartReadBuf = l_Usart->read();
     */
+
 
     // SPI
     spi* l_Spi;
@@ -160,6 +240,7 @@ int main(void)
     //l_Usart->putString(l_SpiReadBuf + (uint8_t*)"\r\n");
 
     l_Spi->disableSpi();
+    // spi
 
 
     // I2C
@@ -170,8 +251,6 @@ int main(void)
     l_I2c->masterInit(0x02, I2C_PS1); // 8000000 / (16 + 2(07)*1) = 400000
     sprintf(szDisp,"i2c master init done\n");
     lcd.lcd_string(szDisp);
-
-    //l_Usart->putString((uint8_t*)"i2c master init done\r\n");
 
     l_I2c->start();
     if (l_I2c->selectSlave(I2C_SLAVE_1, I2C_WRITE) == SUCCESS)
@@ -201,6 +280,9 @@ int main(void)
         //l_Usart->putString((uint8_t*)"slaveSelect i2c slave 1 read failed. status: " + l_I2c->getStatus() + (uint8_t*)"\r\n");
     }
     l_I2c->stop();
+    // i2c
+
+
 
     fcpu_delay_ms(5000);
     lcd.lcd_clrscr();
@@ -214,12 +296,12 @@ int main(void)
     lcd.lcd_string(szDisp);
     for(;;)
     {
-        raw = readADC(3);
+/*        raw = readADC(3);
         button = VREF/1024*raw;
         lcd.lcd_clrscr();
         sprintf(szDisp,"%d/1024 %dV\n", raw, button);
         lcd.lcd_string(szDisp);
-        fcpu_delay_ms(500);
+        fcpu_delay_ms(500);*/
         ;
     }
 }
