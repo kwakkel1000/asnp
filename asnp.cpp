@@ -127,7 +127,7 @@ uint8_t readEEPROM(uint16_t address)
     g_I2C->selectSlave(I2C_EEPROM_1, I2C_READ);
     //if (g_I2C->selectSlave(I2C_EEPROM_1, I2C_WRITE) == SUCCESS)
     {
-        sprintf(szDisp,"write select success\n");
+        sprintf(szDisp,"read select success\n");
         lcd.lcd_string(szDisp);
         g_I2C->write((uint8_t)address >> 8);
         g_I2C->write((uint8_t)address & 0xFF);
@@ -135,8 +135,9 @@ uint8_t readEEPROM(uint16_t address)
         {
         }
         g_I2C->start();
-        data = g_I2C->read(false); // read only 1 byte so ack = false
-        if (g_I2C->getStatus() != 0x58) // 0x50 when ack = true
+        data = g_I2C->read(true); // read only 1 byte so ack = false
+        //if (g_I2C->getStatus() != 0x58) // 0x50 when ack = true
+        if (g_I2C->getStatus() != 0x50) // 0x50 when ack = true
         {
         }
     }
@@ -361,18 +362,19 @@ int main(void)
     fcpu_delay_ms(5000);
     lcd.lcd_clrscr();
     sprintf(szDisp,"write eeprom\n");
+    sprintf(szDisp,"W:%c\n", 0x88);
     lcd.lcd_string(szDisp);
     writeEEPROM(0x0000, 0x88);
     fcpu_delay_ms(5000);
     lcd.lcd_clrscr();
     sprintf(szDisp,"read eeprom\n");
     lcd.lcd_string(szDisp);
-    uint8_t eepromData = 0x00;
+    uint8_t eepromData = 0xEE;
     for(;;)
     {
         lcd.lcd_clrscr();
         eepromData = readEEPROM(0x0000);
-        sprintf(szDisp,"%c\n", eepromData);
+        sprintf(szDisp,"R:%c\n", eepromData);
         lcd.lcd_string(szDisp);
 /*        raw = readADC(3);
         button = VREF/1024*raw;
