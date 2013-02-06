@@ -38,6 +38,7 @@
 #define I2C_SLAVE_2 0b1010001
 
 #define SPI_SLAVE_1 PB5
+#define VREF 5
 
 HD44780 lcd;
 
@@ -45,7 +46,7 @@ HD44780 lcd;
 
 void checkButton();
 void action();
-
+uint16_t readADC(uint8_t ADCchannel);
 
 //2-dimensional array for asigning the buttons and there high and low values
 uint16_t g_Button[6][3] = {{1, 837, 838}, // button 1
@@ -94,14 +95,34 @@ void action()
 
 }
 
+uint16_t readADC(uint8_t ADCchannel)
+{
+    //select ADC channel with safety mask
+    ADMUX = (ADMUX & 0xF0) | (ADCchannel & 0x0F);
+    //single conversion mode
+    ADCSRA |= (1<<ADSC);
+    // wait until ADC conversion is complete
+    while( ADCSRA & (1<<ADSC) );
+    return ADC;
+}
+
 int main(void)
 {
+    // lcd
     lcd.lcd_init(); // init the LCD screen
     lcd.lcd_clrscr(); // initial screen cleanup
     lcd.lcd_home();
     char szDisp[255] = {0};
     sprintf(szDisp,"booting\n");
     lcd.lcd_string(szDisp);
+    // lcd
+
+    // adc
+    // Select Vref=AVcc
+    ADMUX |= (1<<REFS0);
+    //set prescaller to 128 and enable ADC
+    ADCSRA |= (1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0)|(1<<ADEN);
+    // adc
 
     /*
     // USART
@@ -187,9 +208,15 @@ int main(void)
     lcd.lcd_string(szDisp);
     fcpu_delay_ms(5000);
     lcd.lcd_clrscr();
-
+    double raw;
+    double button;
     for(;;)
     {
+        raw = readADC(3);
+        button = (double)VREF/1024*raw;
+        lcd.lcd_clrscr();
+        sprintf(szDisp,"input %4.1f/1024 %4.2fV\n", raw, button);
+        fcpu_delay_ms(5000);
         ;
     }
 }
