@@ -309,7 +309,8 @@ int main(void)
     // I2C
     g_I2C = new i2c();
     //g_I2C->masterInit(0x02, I2C_PS1); // 8000000 / (16 + 2(07)*1) = 400000
-    g_I2C->masterInit(0x0C, I2C_PS1); // 16000000 / (16 + 2(12)*1) = 400000
+    //g_I2C->masterInit(0x0C, I2C_PS1); // 16000000 / (16 + 2(12)*1) = 400000
+    g_I2C->masterInit(0x2A, I2C_PS1); // 16000000 / (16 + 2(42)*1) = 100000
     sprintf(szDisp,"i2c master init done\n");
     lcd.lcd_string(szDisp);
 /*
