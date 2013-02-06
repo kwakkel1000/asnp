@@ -216,7 +216,7 @@ int main(void)
         button = (double)VREF/1024*raw;
         lcd.lcd_clrscr();
         sprintf(szDisp,"input %4.1f/1024 %4.2fV\n", raw, button);
-        fcpu_delay_ms(5000);
+        fcpu_delay_ms(500);
         ;
     }
 }
