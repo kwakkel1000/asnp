@@ -70,15 +70,13 @@ uint8_t g_MenuItem = 0;
 // CTC interrupt for Timer 1
 volatile int interval1;
 volatile int counter1 = 0;
-float sec1 = 0.2;
+float sec1 = 1000;
 
 ISR(TIMER1_COMPA_vect)
 {
-    interval1 = (int) (sec1 * 10);
+    interval1 = (int) (sec1);
     if (counter1 == interval1)
     {
-        sprintf(szDisp,"TIMER1_COMPA_vect\n time done\n");
-        lcd.lcd_string(szDisp);
         counter1 = 0;
         g_ButtonValue = readADC(0);
         if(g_ButtonValue == current_state && counter >0)
@@ -189,15 +187,16 @@ int main(void)
     TCCR1B |= (1 << WGM12); // MAX counter = value OCR1A (Mode 4 / CTC)
 
     //TCCR1B |= 0x01; // prescaler = 1; // TCCR1B |= (1 << CS10);
-    //TCCR1B |= 0x02; // prescaler = 8; // TCCR1B |= (1 << CS11);
-    TCCR1B |= 0x03; // prescaler = 64; // TCCR1B |= (1 << CS11) | (1 << CS10);
+    TCCR1B |= 0x02; // prescaler = 8; // TCCR1B |= (1 << CS11);
+    //TCCR1B |= 0x03; // prescaler = 64; // TCCR1B |= (1 << CS11) | (1 << CS10);
     //TCCR1B |= 0x04; // prescaler = 256; // TCCR1B |= (1 << CS12);
     //TCCR1B |= 0x05; // prescaler = 1024; // TCCR1B |= (1 << CS12) | (1 << CS10);
 
     // setup period
     // when OCR1A = 2400 and prescaler = 8, TIMER1_COMPA_vect interrupt is triggered 1000 times/sec
     // because: 12000000 / 8 / 2400 = 1000;
-    OCR1A = 25000; // OCR1A is 16 bit, so max 65535
+    // 16000000 / 8 / 2000 = 1000
+    OCR1A = 2000; // OCR1A is 16 bit, so max 65535
 
     // trigger interrupt when Timer1 == OCR1A
     TIMSK1 = 1 << OCIE1A;
