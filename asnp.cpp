@@ -397,7 +397,7 @@ int main(void)
         sprintf(szDisp,"%d/1024 %dV\n", raw, button);
         lcd.lcd_string(szDisp);
         fcpu_delay_ms(500);*/
-    fcpu_delay_ms(2000);
+    fcpu_delay_ms(100);
 
         ;
     }
