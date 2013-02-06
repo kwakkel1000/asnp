@@ -62,6 +62,10 @@ int counter = 0; // how many times we have seen new value
 int debounce_count = 50; // number of millis/samples to consider before declaring a debounced input
 int current_state = 0;  // the debounced input value
 
+char szDisp[255] = {0};
+uint8_t g_Menu = 0;
+uint8_t g_MenuItem = 0;
+
 
 // CTC interrupt for Timer 1
 volatile int interval1;
@@ -70,9 +74,11 @@ float sec1 = 0.2;
 
 ISR(TIMER1_COMPA_vect)
 {
-    interval1 = (int) (sec1 * 160);
+    interval1 = (int) (sec1 * 1);
     if (counter1 == interval1)
     {
+        sprintf(szDisp,"TIMER1_COMPA_vect time done\n");
+        lcd.lcd_string(szDisp);
         counter1 = 0;
         g_ButtonValue = readADC(0);
         if(g_ButtonValue == current_state && counter >0)
@@ -112,9 +118,6 @@ void checkButton()
     }
 }
 
-char szDisp[255] = {0};
-uint8_t g_Menu = 0;
-uint8_t g_MenuItem = 0;
 
 void action()
 {
