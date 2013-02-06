@@ -70,7 +70,7 @@ uint8_t g_MenuItem = 0;
 // CTC interrupt for Timer 1
 volatile int interval1;
 volatile int counter1 = 0;
-float sec1 = 1000;
+float sec1 = 1;
 
 ISR(TIMER1_COMPA_vect)
 {
