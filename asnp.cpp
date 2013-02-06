@@ -128,17 +128,17 @@ uint8_t readEEPROM(uint16_t address)
     g_I2C->selectSlave(I2C_EEPROM_1, I2C_WRITE); // 0/1 reversed
     //if (g_I2C->selectSlave(I2C_EEPROM_1, I2C_WRITE) == SUCCESS)
     {
-        sprintf(szDisp,"read select success\n");
-        lcd.lcd_string(szDisp);
+        //sprintf(szDisp,"read select success\n");
+        //lcd.lcd_string(szDisp);
         g_I2C->write((uint8_t)address >> 8);
         g_I2C->write((uint8_t)address & 0xFF);
         if (g_I2C->getStatus() != 0x28)
         {
         }
         g_I2C->start();
-        data = g_I2C->read(true); // read only 1 byte so ack = false
-        //if (g_I2C->getStatus() != 0x58) // 0x50 when ack = true
-        if (g_I2C->getStatus() != 0x50) // 0x50 when ack = true
+        data = g_I2C->read(false); // read only 1 byte so ack = false
+        if (g_I2C->getStatus() != 0x58) // 0x50 when ack = true
+        //if (g_I2C->getStatus() != 0x50) // 0x50 when ack = true
         {
         }
     }
@@ -158,8 +158,8 @@ void writeEEPROM(uint16_t address, uint8_t data)
     g_I2C->selectSlave(I2C_EEPROM_1, I2C_READ); // 0/1 reversed
     //if (g_I2C->selectSlave(I2C_EEPROM_1, I2C_WRITE) == SUCCESS)
     {
-        sprintf(szDisp,"write select success\n");
-        lcd.lcd_string(szDisp);
+        //sprintf(szDisp,"write select success\n");
+        //lcd.lcd_string(szDisp);
         g_I2C->write((uint8_t)address >> 8);
         g_I2C->write((uint8_t)address & 0xFF);
         if (g_I2C->getStatus() != 0x28)
