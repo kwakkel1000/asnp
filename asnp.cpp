@@ -34,10 +34,9 @@
 
 #include "lcd/include/HD44780.h"
 
-#define I2C_SLAVE_1 0b1010000
-#define I2C_SLAVE_2 0b1010001
+#define I2C_EEPROM_1 0b1010000
+#define SPI_ENC28J60 PB5
 
-#define SPI_SLAVE_1 PB5
 #define VREF 5
 
 HD44780 lcd;
@@ -111,7 +110,7 @@ void checkButton()
         if(g_ButtonValue >= g_Button[buttonIndex][1] && g_ButtonValue <= g_Button[buttonIndex][2])
         {
             label = g_Button[buttonIndex][0];
-            action();
+//            action();
         }
     }
 }
@@ -221,7 +220,7 @@ int main(void)
     l_UsartReadBuf = l_Usart->read();
     */
 
-
+/*
     // SPI
     spi* l_Spi;
     uint8_t l_SpiReadBuf;
@@ -243,7 +242,7 @@ int main(void)
 
     l_Spi->disableSpi();
     // spi
-
+*/
 
     // I2C
     i2c* l_I2c;
@@ -255,22 +254,32 @@ int main(void)
     lcd.lcd_string(szDisp);
 
     l_I2c->start();
-    if (l_I2c->selectSlave(I2C_SLAVE_1, I2C_WRITE) == SUCCESS)
+    if (l_I2c->selectSlave(I2C_EEPROM_1, I2C_WRITE) == SUCCESS)
     {
+        sprintf(szDisp,"write success\n");
+        lcd.lcd_string(szDisp);
         //l_I2c->write((uint8_t)*"HELLO I2C SLAVE 1");
-        l_I2c->write(0x06);
+        l_I2c->write(0x00);
+        l_I2c->write(0x00);
+        l_I2c->write(0b10101010);
         if (l_I2c->getStatus() != 0x28)
         {
+            sprintf(szDisp,"write failed: %c\n", l_I2c->getStatus());
+            lcd.lcd_string(szDisp);
             //l_Usart->putString((uint8_t*)"write to i2c slave 1 failed. status: " + l_I2c->getStatus() + (uint8_t*)"\r\n");
         }
     }
     else
     {
+        sprintf(szDisp,"write fail\n");
+        lcd.lcd_string(szDisp);
         //l_Usart->putString((uint8_t*)"slaveSelect i2c slave 1 write failed. status: " + l_I2c->getStatus() + (uint8_t*)"\r\n");
     }
     l_I2c->start();
-    if (l_I2c->selectSlave(I2C_SLAVE_1, I2C_READ) == SUCCESS)
+    if (l_I2c->selectSlave(I2C_EEPROM_1, I2C_READ) == SUCCESS)
     {
+        sprintf(szDisp,"read success\n");
+        lcd.lcd_string(szDisp);
         l_I2cReadBuf = l_I2c->read(false); // read only 1 byte so ack = false
         if (l_I2c->getStatus() != 0x58) // 0x50 when ack = true
         {
@@ -279,6 +288,8 @@ int main(void)
     }
     else
     {
+        sprintf(szDisp,"read fail\n");
+        lcd.lcd_string(szDisp);
         //l_Usart->putString((uint8_t*)"slaveSelect i2c slave 1 read failed. status: " + l_I2c->getStatus() + (uint8_t*)"\r\n");
     }
     l_I2c->stop();
@@ -294,8 +305,9 @@ int main(void)
     lcd.lcd_clrscr();
     int raw;
     int button;
-    sprintf(szDisp,"read adc\n");
+    sprintf(szDisp,"write eeprom\n");
     lcd.lcd_string(szDisp);
+    
     for(;;)
     {
 /*        raw = readADC(3);
