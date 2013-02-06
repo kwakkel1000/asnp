@@ -74,10 +74,10 @@ float sec1 = 0.2;
 
 ISR(TIMER1_COMPA_vect)
 {
-    interval1 = (int) (sec1 * 1);
+    interval1 = (int) (sec1 * 10);
     if (counter1 == interval1)
     {
-        sprintf(szDisp,"TIMER1_COMPA_vect time done\n");
+        sprintf(szDisp,"TIMER1_COMPA_vect\n time done\n");
         lcd.lcd_string(szDisp);
         counter1 = 0;
         g_ButtonValue = readADC(0);
@@ -106,6 +106,8 @@ ISR(TIMER1_COMPA_vect)
 
 void checkButton()
 {
+    sprintf(szDisp,"checkButton\n");
+    lcd.lcd_string(szDisp);
     // loop for scanning the button array.
     for(uint8_t buttonIndex = 0; buttonIndex <= 21; buttonIndex++)
     {
@@ -305,6 +307,8 @@ int main(void)
         sprintf(szDisp,"%d/1024 %dV\n", raw, button);
         lcd.lcd_string(szDisp);
         fcpu_delay_ms(500);*/
+    fcpu_delay_ms(5000);
+
         ;
     }
 }
