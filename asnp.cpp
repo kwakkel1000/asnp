@@ -181,6 +181,13 @@ int main(void)
     }
     l_I2c->stop();
 
+    fcpu_delay_ms(5000);
+    lcd.lcd_clrscr();
+    sprintf(szDisp,"inits done\n");
+    lcd.lcd_string(szDisp);
+    fcpu_delay_ms(5000);
+    lcd.lcd_clrscr();
+
     for(;;)
     {
         ;
