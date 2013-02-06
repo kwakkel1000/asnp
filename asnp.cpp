@@ -104,8 +104,6 @@ ISR(TIMER1_COMPA_vect)
 
 void checkButton()
 {
-    sprintf(szDisp,"checkButton\n");
-    lcd.lcd_string(szDisp);
     // loop for scanning the button array.
     for(uint8_t buttonIndex = 0; buttonIndex <= 21; buttonIndex++)
     {
