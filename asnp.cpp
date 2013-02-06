@@ -362,7 +362,7 @@ int main(void)
     fcpu_delay_ms(5000);
     lcd.lcd_clrscr();
     sprintf(szDisp,"write eeprom\n");
-    sprintf(szDisp,"W:%c\n", 0x88);
+    sprintf(szDisp,"W:%X\n", 0x88);
     lcd.lcd_string(szDisp);
     writeEEPROM(0x0000, 0x88);
     fcpu_delay_ms(5000);
@@ -374,7 +374,7 @@ int main(void)
     {
         lcd.lcd_clrscr();
         eepromData = readEEPROM(0x0000);
-        sprintf(szDisp,"R:%c\n", eepromData);
+        sprintf(szDisp,"R:%X\n", eepromData);
         lcd.lcd_string(szDisp);
 /*        raw = readADC(3);
         button = VREF/1024*raw;
