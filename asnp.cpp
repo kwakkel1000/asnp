@@ -74,7 +74,7 @@ float sec1 = 1;
 
 ISR(TIMER1_COMPA_vect)
 {
-    interval1 = (int) (sec1);
+    interval1 = (int) (sec1 * 10);
     if (counter1 == interval1)
     {
         counter1 = 0;
