@@ -46,6 +46,8 @@ HD44780 lcd;
 void checkButton();
 void action();
 uint16_t readADC(uint8_t ADCchannel);
+uint8_t readEEPROM(uint16_t address);
+void writeEEPROM(uint16_t address, uint8_t data);
 
 //2-dimensional array for asigning the buttons and there high and low values
 uint16_t g_Button[6][3] = {{1, 950, 1000}, // button 1
@@ -64,6 +66,9 @@ int current_state = 0;  // the debounced input value
 char szDisp[255] = {0};
 uint8_t g_Menu = 0;
 uint8_t g_MenuItem = 0;
+
+// objects
+i2c* g_I2C;
 
 
 // CTC interrupt for Timer 1
@@ -115,6 +120,59 @@ void checkButton()
     }
 }
 
+uint8_t readEEPROM(uint16_t address)
+{
+    uint8_t data = 0xFF;
+    g_I2C->start();
+    if (g_I2C->selectSlave(I2C_EEPROM_1, I2C_WRITE) == SUCCESS)
+    {
+        sprintf(szDisp,"write select success\n");
+        lcd.lcd_string(szDisp);
+        g_I2C->write((uint8_t)address >> 8);
+        g_I2C->write((uint8_t)address & 0xFF);
+        if (g_I2C->getStatus() != 0x28)
+        {
+        }
+        g_I2C->start();
+        data = g_I2C->read(false); // read only 1 byte so ack = false
+        if (g_I2C->getStatus() != 0x58) // 0x50 when ack = true
+        {
+        }
+    }
+    else
+    {
+        sprintf(szDisp,"read select fail\n");
+        lcd.lcd_string(szDisp);
+        //l_Usart->putString((uint8_t*)"slaveSelect i2c slave 1 read failed. status: " + l_I2c->getStatus() + (uint8_t*)"\r\n");
+    }
+    g_I2C->stop();
+    return data;
+}
+
+void writeEEPROM(uint16_t address, uint8_t data)
+{
+    g_I2C->start();
+    if (g_I2C->selectSlave(I2C_EEPROM_1, I2C_WRITE) == SUCCESS)
+    {
+        sprintf(szDisp,"write select success\n");
+        lcd.lcd_string(szDisp);
+        g_I2C->write((uint8_t)address >> 8);
+        g_I2C->write((uint8_t)address & 0xFF);
+        if (g_I2C->getStatus() != 0x28)
+        {
+        }
+        g_I2C->write(data);
+        if (g_I2C->getStatus() != 0x28)
+        {
+        }
+    }
+    else
+    {
+        sprintf(szDisp,"write select fail\n");
+        lcd.lcd_string(szDisp);
+    }
+    g_I2C->stop();
+}
 
 void action()
 {
@@ -245,14 +303,11 @@ int main(void)
 */
 
     // I2C
-    i2c* l_I2c;
-    uint8_t l_I2cReadBuf;
-
-    l_I2c = new i2c();
-    l_I2c->masterInit(0x02, I2C_PS1); // 8000000 / (16 + 2(07)*1) = 400000
+    g_I2C = new i2c();
+    g_I2C->masterInit(0x02, I2C_PS1); // 8000000 / (16 + 2(07)*1) = 400000
     sprintf(szDisp,"i2c master init done\n");
     lcd.lcd_string(szDisp);
-
+/*
     l_I2c->start();
     if (l_I2c->selectSlave(I2C_EEPROM_1, I2C_WRITE) == SUCCESS)
     {
@@ -294,7 +349,7 @@ int main(void)
     }
     l_I2c->stop();
     // i2c
-
+*/
 
 
     fcpu_delay_ms(5000);
@@ -303,20 +358,25 @@ int main(void)
     lcd.lcd_string(szDisp);
     fcpu_delay_ms(5000);
     lcd.lcd_clrscr();
-    int raw;
-    int button;
     sprintf(szDisp,"write eeprom\n");
     lcd.lcd_string(szDisp);
-    
+    writeEEPROM(0x0000, 0x88);
+    fcpu_delay_ms(5000);
+    sprintf(szDisp,"read eeprom\n");
+    lcd.lcd_string(szDisp);
+    uint8_t eepromData = 0x00;
     for(;;)
     {
+        eepromData = readEEPROM(0x0000);
+        sprintf(szDisp,"%c\n", eepromData);
+        lcd.lcd_string(szDisp);
 /*        raw = readADC(3);
         button = VREF/1024*raw;
         lcd.lcd_clrscr();
         sprintf(szDisp,"%d/1024 %dV\n", raw, button);
         lcd.lcd_string(szDisp);
         fcpu_delay_ms(500);*/
-    fcpu_delay_ms(5000);
+    fcpu_delay_ms(2000);
 
         ;
     }
