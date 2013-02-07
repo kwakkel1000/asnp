@@ -134,7 +134,7 @@ uint8_t readEEPROM(uint16_t address)
         g_I2C->write((uint8_t)address & 0xFF);
         if (g_I2C->getStatus() != 0x28)
         {
-            sprintf(szDisp,"read select fail: %X\n", g_I2C->getStatus());
+            sprintf(szDisp,"rsf: %X\n", g_I2C->getStatus());
             lcd.lcd_string(szDisp);
         }
         g_I2C->start();
@@ -166,7 +166,7 @@ void writeEEPROM(uint16_t address, uint8_t data)
         g_I2C->write((uint8_t)address & 0xFF);
         if (g_I2C->getStatus() != 0x28)
         {
-            sprintf(szDisp,"write select fail: %X\n", g_I2C->getStatus());
+            sprintf(szDisp,"wsf: %X\n", g_I2C->getStatus());
             lcd.lcd_string(szDisp);
         }
         g_I2C->write(data);
@@ -397,7 +397,7 @@ int main(void)
         sprintf(szDisp,"%d/1024 %dV\n", raw, button);
         lcd.lcd_string(szDisp);
         fcpu_delay_ms(500);*/
-    fcpu_delay_ms(100);
+    fcpu_delay_ms(1000);
 
         ;
     }
