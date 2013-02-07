@@ -134,6 +134,8 @@ uint8_t readEEPROM(uint16_t address)
         g_I2C->write((uint8_t)address & 0xFF);
         if (g_I2C->getStatus() != 0x28)
         {
+            sprintf(szDisp,"read select fail: %X\n", g_I2C->getStatus());
+            lcd.lcd_string(szDisp);
         }
         g_I2C->start();
         data = g_I2C->read(false); // read only 1 byte so ack = false
@@ -164,6 +166,8 @@ void writeEEPROM(uint16_t address, uint8_t data)
         g_I2C->write((uint8_t)address & 0xFF);
         if (g_I2C->getStatus() != 0x28)
         {
+            sprintf(szDisp,"write select fail: %X\n", g_I2C->getStatus());
+            lcd.lcd_string(szDisp);
         }
         g_I2C->write(data);
         if (g_I2C->getStatus() != 0x28)
