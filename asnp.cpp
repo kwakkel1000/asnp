@@ -34,7 +34,7 @@
 
 #include "lcd/include/HD44780.h"
 
-#define I2C_EEPROM_1 0x50
+#define I2C_EEPROM_1 0xA0 // needs 8bits not 7bits
 #define SPI_ENC28J60 PB5
 
 #define VREF 5
@@ -66,9 +66,6 @@ int current_state = 0;  // the debounced input value
 char szDisp[255] = {0};
 uint8_t g_Menu = 0;
 uint8_t g_MenuItem = 0;
-
-// objects
-i2c* g_I2C;
 
 
 // CTC interrupt for Timer 1
@@ -123,23 +120,23 @@ void checkButton()
 uint8_t readEEPROM(uint16_t address)
 {
     uint8_t data = 0x00;
-    g_I2C->start();
-    g_I2C->selectSlave(I2C_EEPROM_1, I2C_WRITE); // 0/1 reversed
+    i2c::start();
+    i2c::selectSlave(I2C_EEPROM_1, I2C_READ);
     //if (g_I2C->selectSlave(I2C_EEPROM_1, I2C_WRITE) == SUCCESS)
     {
 //        sprintf(szDisp,"re sel: %X\n", g_I2C->getStatus());
 //        lcd.lcd_string(szDisp);
         //sprintf(szDisp,"read select success\n");
         //lcd.lcd_string(szDisp);
-        g_I2C->write((uint8_t)address >> 8);
-        g_I2C->write((uint8_t)address & 0xFF);
+        i2c::write((uint8_t)address >> 8);
+        i2c::write((uint8_t)address & 0xFF);
 //        if (g_I2C->getStatus() != 0x28)
 //        {
 //            sprintf(szDisp,"wr f: %X\n", g_I2C->getStatus());
 //            lcd.lcd_string(szDisp);
 //        }
-        g_I2C->start();
-        data = g_I2C->read(false); // read only 1 byte so ack = false
+        i2c::start();
+        data = i2c::read(false); // read only 1 byte so ack = false
         //sprintf(szDisp,"read: %X\n", g_I2C->getStatus());
         //lcd.lcd_string(szDisp);
 //        if (g_I2C->getStatus() != 0x58) // 0x50 when ack = true
@@ -153,26 +150,26 @@ uint8_t readEEPROM(uint16_t address)
         lcd.lcd_string(szDisp);
         //l_Usart->putString((uint8_t*)"slaveSelect i2c slave 1 read failed. status: " + l_I2c->getStatus() + (uint8_t*)"\r\n");
     }*/
-    g_I2C->stop();
+    i2c::stop();
     return data;
 }
 
 void writeEEPROM(uint16_t address, uint8_t data)
 {
-    g_I2C->start();
-    g_I2C->selectSlave(I2C_EEPROM_1, I2C_READ); // 0/1 reversed
+    i2c::start();
+    i2c::selectSlave(I2C_EEPROM_1, I2C_WRITE);
     //if (g_I2C->selectSlave(I2C_EEPROM_1, I2C_WRITE) == SUCCESS)
     {
 //        sprintf(szDisp,"wr sel: %X\n", g_I2C->getStatus());
 //        lcd.lcd_string(szDisp);
-        g_I2C->write((uint8_t)address >> 8);
-        g_I2C->write((uint8_t)address & 0xFF);
+        i2c::write((uint8_t)address >> 8);
+        i2c::write((uint8_t)address & 0xFF);
 //        if (g_I2C->getStatus() != 0x28)
 //        {
 //            sprintf(szDisp,"wr f: %X\n", g_I2C->getStatus());
 //            lcd.lcd_string(szDisp);
 //        }
-        g_I2C->write(data);
+        i2c::write(data);
 //        if (g_I2C->getStatus() != 0x28)
 //        {
 //        }
@@ -182,7 +179,7 @@ void writeEEPROM(uint16_t address, uint8_t data)
         sprintf(szDisp,"write select fail\n");
         lcd.lcd_string(szDisp);
     }*/
-    g_I2C->stop();
+    i2c::stop();
 }
 
 void action()
@@ -314,10 +311,9 @@ int main(void)
 */
 
     // I2C
-    g_I2C = new i2c();
-    //g_I2C->masterInit(0x02, I2C_PS1); // 8000000 / (16 + 2(07)*1) = 400000
-    g_I2C->masterInit(0x0C, I2C_PS1); // 16000000 / (16 + 2(12)*1) = 400000
-    //g_I2C->masterInit(0x2A, I2C_PS1); // 16000000 / (16 + 2(42)*1) = 100000
+    //i2c::masterInit(0x02, I2C_PS1); // 8000000 / (16 + 2(07)*1) = 400000
+    i2c::masterInit(0x0C, I2C_PS1); // 16000000 / (16 + 2(12)*1) = 400000
+    //i2c::masterInit(0x2A, I2C_PS1); // 16000000 / (16 + 2(42)*1) = 100000
     sprintf(szDisp,"i2c master init done\n");
     lcd.lcd_string(szDisp);
 /*
