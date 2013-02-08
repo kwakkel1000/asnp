@@ -39,6 +39,7 @@
 
 #define VREF 5
 
+// objects
 HD44780 lcd;
 
 // functions
@@ -124,12 +125,10 @@ uint8_t readEEPROM(uint16_t address)
     i2c::selectSlave(I2C_EEPROM_1, I2C_READ);
     //if (g_I2C->selectSlave(I2C_EEPROM_1, I2C_WRITE) == SUCCESS)
     {
-//        sprintf(szDisp,"re sel: %X\n", g_I2C->getStatus());
-//        lcd.lcd_string(szDisp);
-        //sprintf(szDisp,"read select success\n");
-        //lcd.lcd_string(szDisp);
+        sprintf(szDisp,"re sel: %X\n", I2C_STATUS);
+        lcd.lcd_string(szDisp);
+
         i2c::write((uint8_t)address >> 8);
-        //i2c::write((uint8_t)address & 0xFF);
         i2c::write((uint8_t)address);
 //        if (g_I2C->getStatus() != 0x28)
 //        {
@@ -161,10 +160,10 @@ void writeEEPROM(uint16_t address, uint8_t data)
     i2c::selectSlave(I2C_EEPROM_1, I2C_WRITE);
     //if (g_I2C->selectSlave(I2C_EEPROM_1, I2C_WRITE) == SUCCESS)
     {
-//        sprintf(szDisp,"wr sel: %X\n", g_I2C->getStatus());
-//        lcd.lcd_string(szDisp);
+        sprintf(szDisp,"wr sel: %X\n", I2C_STATUS);
+        lcd.lcd_string(szDisp);
+
         i2c::write((uint8_t)address >> 8);
-        //i2c::write((uint8_t)address & 0xFF);
         i2c::write((uint8_t)address);
 //        if (g_I2C->getStatus() != 0x28)
 //        {
