@@ -13,7 +13,8 @@ OBJCOPY = avr-objcopy
 MCU = atmega328p
 CFLAGS = -Wall -Os -std=gnu++11 -mmcu=$(MCU) -I.
 
-AVRDUDE_PROGRAMMER = gpio
+#AVRDUDE_PROGRAMMER = gpio
+AVRDUDE_PROGRAMMER = usbasp
 AVRDUDE_WRITE_FLASH = -U flash:w:$(TARGET).hex
 AVRDUDE_FLAGS = -p $(MCU) -c $(AVRDUDE_PROGRAMMER) -v
 
