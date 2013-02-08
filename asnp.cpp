@@ -129,7 +129,8 @@ uint8_t readEEPROM(uint16_t address)
         //sprintf(szDisp,"read select success\n");
         //lcd.lcd_string(szDisp);
         i2c::write((uint8_t)address >> 8);
-        i2c::write((uint8_t)address & 0xFF);
+        //i2c::write((uint8_t)address & 0xFF);
+        i2c::write((uint8_t)address);
 //        if (g_I2C->getStatus() != 0x28)
 //        {
 //            sprintf(szDisp,"wr f: %X\n", g_I2C->getStatus());
@@ -163,7 +164,8 @@ void writeEEPROM(uint16_t address, uint8_t data)
 //        sprintf(szDisp,"wr sel: %X\n", g_I2C->getStatus());
 //        lcd.lcd_string(szDisp);
         i2c::write((uint8_t)address >> 8);
-        i2c::write((uint8_t)address & 0xFF);
+        //i2c::write((uint8_t)address & 0xFF);
+        i2c::write((uint8_t)address);
 //        if (g_I2C->getStatus() != 0x28)
 //        {
 //            sprintf(szDisp,"wr f: %X\n", g_I2C->getStatus());
@@ -360,7 +362,6 @@ int main(void)
     // i2c
 */
 
-cli();
     fcpu_delay_ms(5000);
     lcd.lcd_clrscr();
     sprintf(szDisp,"inits done\n");
@@ -377,11 +378,9 @@ cli();
     lcd.lcd_clrscr();
     sprintf(szDisp,"read eeprom\n");
     lcd.lcd_string(szDisp);
-sei();
     uint8_t eepromData = 0xEE;
     for(;;)
     {
-cli();
         lcd.lcd_clrscr();
         eepromData = readEEPROM(0x0002);
         sprintf(szDisp,"R:%X\n", eepromData);
@@ -392,7 +391,6 @@ cli();
         eepromData = readEEPROM(0x0006);
         sprintf(szDisp,"R:%X\n", eepromData);
         lcd.lcd_string(szDisp);
-sei();
 /*        raw = readADC(3);
         button = VREF/1024*raw;
         lcd.lcd_clrscr();
